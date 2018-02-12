@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
-from mymodel import Net
+from mymodel2 import Net
 from data import get_training_set, get_test_set
 import datetime,random,os,csv
 # Training settings
