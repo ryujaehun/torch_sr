@@ -20,15 +20,16 @@ parser.add_argument('--nEpochs', type=int, default=2, help='number of epochs to 
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=12, help='number of threads for data loader to use')
+parser.add_argument('--name', type=str, default='log', help='name of log file name')
 #parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
 opt = parser.parse_args()
 _time="result/"+str(datetime.datetime.now())[:10]+"_"+str(datetime.datetime.now())[11:-7]
 os.makedirs(_time)
-f = open(os.path.join(os.path.join(os.getcwd(),_time),"logging.txt"), 'w')
+f = open(os.path.join(os.path.join(os.getcwd(),_time),opt.name+".txt"), 'w')
 f.write(str(opt))
 
 print(opt)
-fc = open(os.path.join(os.path.join(os.getcwd(),_time),"logging.csv"), 'w', encoding='utf-8', newline='')
+fc = open(os.path.join(os.path.join(os.getcwd(),_time),opt.name+".csv"), 'w', encoding='utf-8', newline='')
 wr = csv.writer(fc)
 idx=0
 wr.writerow([idx,'upscale_factor',opt.upscale_factor])
@@ -64,14 +65,14 @@ criterion = nn.MSELoss()
 
 if cuda:
     
-    #if torch.cuda.device_count() > 1:
-    #    print("Let's use", torch.cuda.device_count(), "GPUs!")
-    #    model = nn.DataParallel(model)
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        model = nn.DataParallel(model)
        # criterion=nn.DataParallel(criterion)
 
-    #if torch.cuda.is_available():
+    if torch.cuda.is_available():
     
-    model = model.cuda()
+        model = model.cuda()
     criterion = criterion.cuda()
 
 optimizer = optim.Adam(model.parameters(), lr=opt.lr)

@@ -9,11 +9,11 @@ class Net(nn.Module):
 
         self.relu = nn.ReLU()
         self.conv1 = nn.Conv2d(1, 64, (5, 5), (1, 1), (2, 2))
-        self.convdw2=nn.Conv2d(64,64,3,1,1,groups=64,bias=False)
-        self.convpw2=nn.Conv2d(64,64,1,1,0,bias=False)
+        self.convdw2=nn.Conv2d(64,64,3,1,1,groups=64,bias=True)
+        self.convpw2=nn.Conv2d(64,64,1,1,0,bias=True)
 
-        self.convdw3=nn.Conv2d(64,64,3,1,1,groups=64,bias=False)
-        self.convpw3=nn.Conv2d(64,32,1,1,0,bias=False)
+        self.convdw3=nn.Conv2d(64,64,3,1,1,groups=64,bias=True)
+        self.convpw3=nn.Conv2d(64,32,1,1,0,bias=True)
 
         self.conv4 = nn.Conv2d(32, upscale_factor ** 2, (3, 3), (1, 1), (1, 1))
         self.pixel_shuffle = nn.PixelShuffle(upscale_factor)
