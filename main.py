@@ -7,7 +7,6 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
-from mymodel import Net
 from data import get_training_set, get_test_set
 import datetime,random,os,csv
 # Training settings
@@ -18,17 +17,36 @@ parser.add_argument('--batchSize', type=int, default=64, help='training batch si
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
 parser.add_argument('--nEpochs', type=int, default=2, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
-parser.add_argument('--cuda', action='store_true', required=True,help='use cuda?')
+parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=12, help='number of threads for data loader to use')
-#parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
+parser.add_argument('--model', type=int, default='1', help='name of log file name')
+
 opt = parser.parse_args()
+name=''
+if opt.model is 1:
+    from model import Net
+    name='default model non depthwise'
+elif opt.model is 2:
+    from model_dw import Net
+    name='default model depthwise'
+elif opt.model is 3:  
+    from mymodel import Net
+    name='custom model non depthwise'
+elif opt.model is 4:  
+    from mymodel_dw import Net
+    name='custom model depthwise'
+else:
+    from model import Net
+    name='default model non depthwise'
+#parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
+#opt = parser.parse_args()
 _time="result/"+str(datetime.datetime.now())[:10]+"_"+str(datetime.datetime.now())[11:-7]
 os.makedirs(_time)
-f = open(os.path.join(os.path.join(os.getcwd(),_time),"logging.txt"), 'w')
+f = open(os.path.join(os.path.join(os.getcwd(),_time),name+".txt"), 'w')
 f.write(str(opt))
 
 print(opt)
-fc = open(os.path.join(os.path.join(os.getcwd(),_time),"logging.csv"), 'w', encoding='utf-8', newline='')
+fc = open(os.path.join(os.path.join(os.getcwd(),_time),name+".csv"), 'w', encoding='utf-8', newline='')
 wr = csv.writer(fc)
 idx=0
 wr.writerow([idx,'upscale_factor',opt.upscale_factor])
