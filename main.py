@@ -1,7 +1,7 @@
 from __future__ import print_function
 import argparse
 from math import log10
-
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -84,7 +84,6 @@ if cuda:
     
     if torch.cuda.device_count() > 1:
         print("Let's use", torch.cuda.device_count(), "GPUs!")
-        model = nn.DataParallel(model)
        # criterion=nn.DataParallel(criterion)
 
     if torch.cuda.is_available():
@@ -94,7 +93,13 @@ if cuda:
 
 optimizer = optim.Adam(model.parameters(), lr=opt.lr)
 
+model_parameters = filter(lambda p: p.requires_grad, model.parameters())
+params = sum([np.prod(p.size()) for p in model_parameters])
+print("Num of parameters",params)
 
+wr.writerow([idx,'Num of parameters',params])
+idx+=1
+f.write('Num of parameters '+str(params))
 def train(epoch):
     epoch_loss = 0
     global idx
@@ -111,7 +116,7 @@ def train(epoch):
         optimizer.step()
         f.write("===> Epoch[{}]({}/{}): Loss: {:.4f}".format(epoch, iteration, len(training_data_loader), loss.data[0]))
         print("===> Epoch[{}]({}/{}): Loss: {:.4f}".format(epoch, iteration, len(training_data_loader), loss.data[0]))
-        wr.writerow([idx,'Loss'])
+        wr.writerow([idx,'Loss',epoch,iteration,loss.data[0]])
         idx+=1
     wr.writerow([idx,'Avg_ioss',epoch,epoch_loss / len(training_data_loader)])
     idx+=1
