@@ -17,9 +17,7 @@ parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=12, help='number of threads for data loader to use')
 parser.add_argument('--weight', type=str, required=True, help='name of log file name')
-
-print(opt)
-
+opt = parser.parse_args()
 cuda = opt.cuda
 if cuda and not torch.cuda.is_available():
     raise Exception("No GPU found, please run without --cuda")
@@ -36,14 +34,10 @@ criterion = nn.MSELoss()
 
 if cuda:
     
-    if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        model = nn.DataParallel(model)
-       # criterion=nn.DataParallel(criterion)
 
-    if torch.cuda.is_available():
+    #if torch.cuda.is_available():
     
-        model = model.cuda()
+   # model = model.cuda()
     criterion = criterion.cuda()
 
 
