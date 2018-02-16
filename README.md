@@ -1,7 +1,9 @@
-# Superresolution using an efficient sub-pixel convolutional neural network
 
-This example illustrates how to use the efficient sub-pixel convolution layer described in  ["Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network" - Shi et al.](https://arxiv.org/abs/1609.05158) for increasing spatial resolution within your network for tasks such as superresolution.
-
+## branch 설명
+* hotfix의 경우 subpixel srcnn ycbcr을 이용한다.
+    * mobilenet 과 custom model 을 사용한다.
+* hotfix1 의 경우 vanilla srcnn
+* hotfix2 의 경우 RGB 사용
 ```
 usage: main.py [-h] --upscale_factor UPSCALE_FACTOR [--batchSize BATCHSIZE]
                [--testBatchSize TESTBATCHSIZE] [--nEpochs NEPOCHS] [--lr LR]
@@ -20,8 +22,6 @@ optional arguments:
   --threads             number of threads for data loader to use Default=4
   --seed                random seed to use. Default=123
 ```
-This example trains a super-resolution network on the [BSD300 dataset](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/), using crops from the 200 training images, and evaluating on crops of the 100 test images. A snapshot of the model after every epoch with filename model_epoch_<epoch_number>.pth
-
 ## Example Usage:
 
 ### Train
