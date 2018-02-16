@@ -20,7 +20,7 @@ parser.add_argument('--nEpochs', type=int, default=2, help='number of epochs to 
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=12, help='number of threads for data loader to use')
-parser.add_argument('--model', type=int, default='1', help='name of log file name')
+parser.add_argument('--model', type=int, default='1', help='choose a model')
 
 opt = parser.parse_args()
 name=''

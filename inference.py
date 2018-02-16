@@ -16,27 +16,7 @@ parser.add_argument('--upscale_factor', type=int, required=True, help="super res
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=12, help='number of threads for data loader to use')
-parser.add_argument('--model', type=int, default='1', help='name of log file name')
 parser.add_argument('--weight', type=str, required=True, help='name of log file name')
-
-opt = parser.parse_args()
-if opt.model is 1:
-    from model import Net
-    name='default model non depthwise'
-elif opt.model is 2:
-    from model_dw import Net
-    name='default model depthwise'
-elif opt.model is 3:  
-    from mymodel import Net
-    name='custom model non depthwise'
-elif opt.model is 4:  
-    from mymodel_dw import Net
-    name='custom model depthwise'
-else:
-    from model import Net
-    name='default model non depthwise'
-#parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
-#opt = parser.parse_args()
 
 print(opt)
 
