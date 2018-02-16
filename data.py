@@ -3,7 +3,7 @@ from os import makedirs, remove
 from six.moves import urllib
 import tarfile
 from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
-
+from PIL import Image
 from dataset import DatasetFromFolder
 
 
@@ -40,7 +40,7 @@ def input_transform(crop_size, upscale_factor):
         CenterCrop(crop_size),
         Resize(crop_size // upscale_factor),
         #addition 
-        Resize(crop_size ,interpolation=Image.BICUBIC),
+        Resize(crop_size,interpolation=Image.BICUBIC),
         ToTensor(),
     ])
 
@@ -56,7 +56,7 @@ def get_training_set(upscale_factor):
     root_dir =load_data()
     train_dir = join(root_dir, "train")
     crop_size = calculate_valid_crop_size(256, upscale_factor)
-
+    print("1: ",crop_size)
     return DatasetFromFolder(train_dir,
                              input_transform=input_transform(crop_size, upscale_factor),
                              target_transform=target_transform(crop_size))
@@ -66,7 +66,7 @@ def get_test_set(upscale_factor):
     root_dir =load_data()
     test_dir = join(root_dir, "test")
     crop_size = calculate_valid_crop_size(256, upscale_factor)
-
+    print("2: ",crop_size)
     return DatasetFromFolder(test_dir,
                              input_transform=input_transform(crop_size, upscale_factor),
                              target_transform=target_transform(crop_size))

@@ -12,7 +12,6 @@ def is_image_file(filename):
 def load_img(filepath):
     img = Image.open(filepath).convert('YCbCr')
     y, _, _ = img.split()
-    y = y.resize(out_img_y.size, Image.BICUBIC) 
     return y
 
 
