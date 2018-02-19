@@ -7,8 +7,8 @@ from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
 from dataset import DatasetFromFolder
 
 
-def load_data(dest="dataset"):
-    output_image_dir = join(dest, "imagenet/images")
+def load_data(dest="BSDS300"):
+    output_image_dir = join('dataset', dest+"/images")
     '''
     if not exists(output_image_dir):
         makedirs(dest)
@@ -50,8 +50,8 @@ def target_transform(crop_size):
     ])
 
 
-def get_training_set(upscale_factor):
-    root_dir =load_data()
+def get_training_set(upscale_factor,dest):
+    root_dir =load_data(dest)
     train_dir = join(root_dir, "train")
     crop_size = calculate_valid_crop_size(256, upscale_factor)
 
@@ -60,8 +60,8 @@ def get_training_set(upscale_factor):
                              target_transform=target_transform(crop_size))
 
 
-def get_test_set(upscale_factor):
-    root_dir =load_data()
+def get_test_set(upscale_factor,dest):
+    root_dir =load_data(dest)
     test_dir = join(root_dir, "test")
     crop_size = calculate_valid_crop_size(256, upscale_factor)
 

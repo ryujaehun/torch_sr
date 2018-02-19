@@ -1,8 +1,0 @@
-0,upscale_factor,2
-1,batchSize,256
-2,testBatchSize,100
-3,Epoch,30
-4,learningRate,0.001
-5,threads,12
-6,Num of parameters,20099
-7,Loss,1,1,0.5877770185470581

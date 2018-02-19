@@ -1,1 +1,0 @@
-Namespace(batchSize=256, cuda=True, data=None, lr=0.001, model=1, nEpochs=30, testBatchSize=100, threads=12, upscale_factor=2)===> Loading datasets===> Building modelNum of parameters 20099===> Epoch[1](1/244): Loss: 0.5878

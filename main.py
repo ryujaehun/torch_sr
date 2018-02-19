@@ -13,7 +13,7 @@ from torch.nn.modules.module import _addindent
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Resolution')
 parser.add_argument('--upscale_factor', type=int, required=True, help="super resolution upscale factor")
-parser.add_argument('--data', type=str, required=False, help="train data path")
+parser.add_argument('--data', type=str, default='BSDS300',required=False, help="train data path")
 parser.add_argument('--batchSize', type=int, default=64, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
 parser.add_argument('--nEpochs', type=int, default=2, help='number of epochs to train for')
@@ -23,22 +23,22 @@ parser.add_argument('--threads', type=int, default=12, help='number of threads f
 parser.add_argument('--model', type=int, default='1', help='choose a model')
 
 opt = parser.parse_args()
-name=''
+name=opt.data
 if opt.model is 1:
     from model import Net
-    name='default model non depthwise'
+    name+=' default_model_non_depthwise'
 elif opt.model is 2:
     from model_dw import Net
-    name='default model depthwise'
+    name+=' default_model_depthwise'
 elif opt.model is 3:  
     from mymodel import Net
-    name='custom model non depthwise'
+    name+=' custom_model_non_depthwise'
 elif opt.model is 4:  
     from mymodel_dw import Net
-    name='custom model depthwise'
+    name+=' custom_model_depthwise'
 else:
     from model import Net
-    name='default model non depthwise'
+    name+=' default_model_non_depthwise'
 #parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
 #opt = parser.parse_args()
 _time="result/"+str(datetime.datetime.now())[:10]+"_"+str(datetime.datetime.now())[11:-7]
@@ -72,8 +72,8 @@ if cuda:
     torch.cuda.manual_seed(random.randint(1,1000))
 f.write('===> Loading datasets')
 print('===> Loading datasets')
-train_set = get_training_set(opt.upscale_factor)
-test_set = get_test_set(opt.upscale_factor)
+train_set = get_training_set(opt.upscale_factor,opt.data)
+test_set = get_test_set(opt.upscale_factor,opt.data)
 training_data_loader = DataLoader(dataset=train_set, num_workers=opt.threads, batch_size=opt.batchSize, shuffle=True)
 testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batch_size=opt.testBatchSize, shuffle=False)
 f.write('===> Building model')
