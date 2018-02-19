@@ -8,7 +8,7 @@ class Net(nn.Module):
         super(Net, self).__init__()
 
         self.relu = nn.ReLU()
-        self.conv1 = nn.Conv2d(1, 32, (5, 5), (1, 1), (2, 2))
+        self.conv1 = nn.Conv2d(3, 32, (5, 5), (1, 1), (2, 2))
         self.convdw2=nn.Conv2d(32,32,3,1,1,groups=32,bias=True)
         self.convpw2=nn.Conv2d(32,32,1,1,0,bias=True)
 
