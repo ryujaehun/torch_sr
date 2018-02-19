@@ -8,10 +8,10 @@ class Net(nn.Module):
         super(Net, self).__init__()
 
         self.relu = nn.ReLU()
-        self.conv1 = nn.Conv2d(1, 64, (9, 9), (1, 1))
+        self.conv1 = nn.Conv2d(3, 64, (9, 9), (1, 1))
         self.conv2 = nn.Conv2d(64, 32, (1, 1), (1, 1))    
         self.convdw3=nn.Conv2d(32,32,5,1,groups=32,bias=True)
-        self.convpw3=nn.Conv2d(32,1,1,1,0,bias=True)
+        self.convpw3=nn.Conv2d(32,3,1,1,0,bias=True)
 
 
         self._initialize_weights()
