@@ -41,13 +41,14 @@ def input_transform(crop_size, upscale_factor):
         Resize(crop_size // upscale_factor),
         #addition 
         Resize(crop_size,interpolation=Image.BICUBIC),
+        
         ToTensor(),
     ])
 
 
 def target_transform(crop_size):
     return Compose([
-        CenterCrop(crop_size),
+        CenterCrop(20),
         ToTensor(),
     ])
 
@@ -55,8 +56,7 @@ def target_transform(crop_size):
 def get_training_set(upscale_factor):
     root_dir =load_data()
     train_dir = join(root_dir, "train")
-    crop_size = calculate_valid_crop_size(256, upscale_factor)
-    print("1: ",crop_size)
+    crop_size = calculate_valid_crop_size(33, upscale_factor)
     return DatasetFromFolder(train_dir,
                              input_transform=input_transform(crop_size, upscale_factor),
                              target_transform=target_transform(crop_size))
@@ -65,8 +65,7 @@ def get_training_set(upscale_factor):
 def get_test_set(upscale_factor):
     root_dir =load_data()
     test_dir = join(root_dir, "test")
-    crop_size = calculate_valid_crop_size(256, upscale_factor)
-    print("2: ",crop_size)
+    crop_size = calculate_valid_crop_size(33, upscale_factor)
     return DatasetFromFolder(test_dir,
                              input_transform=input_transform(crop_size, upscale_factor),
                              target_transform=target_transform(crop_size))
