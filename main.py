@@ -36,6 +36,17 @@ elif opt.model is 3:
 elif opt.model is 4:  
     from mymodel_dw import Net
     name+=' custom_model_depthwise'
+
+elif opt.model is 5:  
+    from mymodel1 import Net
+    name+=' custom_model1_non_depthwise'
+elif opt.model is 6:  
+    from mymodel1_dw import Net
+    name+=' custom_model1_depthwise'
+
+elif opt.model is 7:  
+    from mymodel2_dw import Net
+    name+='test'
 else:
     from model import Net
     name+=' default_model_non_depthwise'
