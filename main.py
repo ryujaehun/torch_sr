@@ -14,13 +14,13 @@ from torch.nn.modules.module import _addindent
 parser = argparse.ArgumentParser(description='PyTorch Super Resolution')
 parser.add_argument('--upscale_factor', type=int, required=True, help="super resolution upscale factor")
 parser.add_argument('--data', type=str, default='BSDS300',required=False, help="train data path")
-parser.add_argument('--batchSize', type=int, default=64, help='training batch size')
+parser.add_argument('--batchSize', type=int, default=12, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-parser.add_argument('--nEpochs', type=int, default=2, help='number of epochs to train for')
+parser.add_argument('--nEpochs', type=int, default=100, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
-parser.add_argument('--threads', type=int, default=12, help='number of threads for data loader to use')
-parser.add_argument('--model', type=int, default='1', help='choose a model')
+parser.add_argument('--threads', type=int, default=8, help='number of threads for data loader to use')
+parser.add_argument('--model', type=int, default='2', help='choose a model')
 
 opt = parser.parse_args()
 name=opt.data
@@ -59,11 +59,11 @@ criterion = nn.MSELoss()
 
 if cuda:
 
-    if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        model = nn.DataParallel(model)
-    if torch.cuda.is_available():
-        model = model.cuda()
+    #if torch.cuda.device_count() > 1:
+        #print("Let's use", torch.cuda.device_count(), "GPUs!")
+        #model = nn.DataParallel(model)
+    #if torch.cuda.is_available():
+    model = model.cuda()
     criterion = criterion.cuda()
 
 optimizer = optim.Adam(model.parameters(), lr=opt.lr)
@@ -101,9 +101,9 @@ def test(epoch):
 
 
 def checkpoint(epoch):
-    model_out_path = "model_epoch_{}.pth".format(epoch)
+    model_out_path = "model_epoch_{}".format(epoch)
     model_out_path=os.path.join(os.path.join(os.getcwd(),_time),model_out_path)
-    torch.save(model, model_out_path)
+    torch.save(model.state_dict(), model_out_path)
 
     print("Checkpoint saved to {}".format(model_out_path))
 
