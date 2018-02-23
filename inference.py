@@ -26,7 +26,7 @@ torch.manual_seed(random.randint(1,1000))
 if cuda:
     torch.cuda.manual_seed(random.randint(1,1000))
 print('===> Loading datasets')
-test_set = get_test_set(opt.upscale_factor)
+test_set = get_test_set(opt.upscale_factor,"BSDS300")
 testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batch_size=opt.testBatchSize, shuffle=False)
 print('===> Building model')
 model =torch.load(opt.weight)
@@ -91,5 +91,5 @@ def test(epoch):
 
 
 
-for epoch in range(1,10 ):
+for epoch in range(1,2 ):
     test(epoch)
