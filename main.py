@@ -7,28 +7,28 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
-from data import get_training_set, get_test_set
+from utils.data import get_training_set, get_test_set
 import datetime,random,os,csv
 from torch.nn.modules.module import _addindent
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Resolution')
-parser.add_argument('--upscale_factor', type=int, required=True, help="super resolution upscale factor")
+parser.add_argument('--upscale_factor', type=int, default=2, required=False, help="super resolution upscale factor")
 parser.add_argument('--data', type=str, default='BSDS300',required=False, help="train data path")
 parser.add_argument('--batchSize', type=int, default=12, help='training batch size')
-parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-parser.add_argument('--nEpochs', type=int, default=100, help='number of epochs to train for')
-parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
+parser.add_argument('--testBatchSize', type=int, default=100, help='testing batch size')
+parser.add_argument('--nEpochs', type=int, default=500, help='number of epochs to train for')
+parser.add_argument('--lr', type=float, default=0.001, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
-parser.add_argument('--threads', type=int, default=8, help='number of threads for data loader to use')
-parser.add_argument('--model', type=int, default='2', help='choose a model')
+parser.add_argument('--threads', type=int, default=11, help='number of threads for data loader to use')
+parser.add_argument('--model', type=int, default='1', help='choose a model')
 
 opt = parser.parse_args()
 name=opt.data
 if opt.model is 1:
-    from model import Net
+    from net.model import Net
     name+=' default_model_non_depthwise'
 elif opt.model is 2:
-    from mymodel_dw import Net
+    from net.mymodel_dw import Net
     name+=' default_model_depthwise'
 else:
     from model import Net
