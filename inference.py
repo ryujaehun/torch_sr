@@ -35,7 +35,7 @@ criterion = nn.MSELoss()
 if cuda:
     criterion = criterion.cuda()
 
-def test(epoch):
+def test():
     avg_psnr = 0
     for batch in testing_data_loader:
         input, target = Variable(batch[0]), Variable(batch[1])
