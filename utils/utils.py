@@ -113,3 +113,58 @@ def _pruning(_model,_weight,index,epoch=50):
         _train(_model,k)
     prnr=PSNR(_model)
     print('conv:',i,' num:',j,'is pruning psnr:',prnr)
+def cal_pruning(_model,_weight_soruce,retrain=True,epoch=200):
+    _weight=deepcopy(_weight_soruce)
+    print("===> Starting Calculate Pruning")
+    keys_list=list(_weight.keys())
+    temp=[]
+    for i in range(0,len(keys_list)-2,2):
+        temp.append(len(_weight[keys_list[i]]))
+    alpha,beta,gamma=temp
+    print(alpha,beta,gamma)
+    psnr_list=[]
+    for i in range(0,len(keys_list)-2,2):
+        if i is 0:
+            alpha-=1
+            modify(_model,alpha,beta,gamma)
+        elif i is 2:
+            alpha+=1
+            beta-=1
+            modify(_model,alpha,beta,gamma)
+        elif i is 4:
+            beta+=1
+            gamma-=1
+            modify(_model,alpha,beta,gamma)
+            _weight=deepcopy(_weight_soruce)
+        for j in range(len(_weight[keys_list[i]])):
+            _weight=deepcopy(_weight_soruce)
+            weight_matrix=_weight[keys_list[i]]
+            bias_matrix=_weight[keys_list[i+1]]
+            temp_weight=0
+            if j is 0:
+                temp_weight=weight_matrix[0].abs().sum()
+                _weight[keys_list[i]]=weight_matrix[1:len(_weight[keys_list[i]])]
+                _weight[keys_list[i+1]]=bias_matrix[1:len(_weight[keys_list[i]])+1]
+            elif j is len(_weight[keys_list[i]])-1:
+                temp_weight=weight_matrix[len(_weight[keys_list[i]])-1].abs().sum()
+                _weight[keys_list[i]]=weight_matrix[0:len(_weight[keys_list[i]])-1]
+                _weight[keys_list[i+1]]=bias_matrix[0:len(_weight[keys_list[i]])]
+            else:
+                temp_weight=weight_matrix[j].abs().sum()
+                _weight[keys_list[i]]=torch.cat((weight_matrix[0:j],weight_matrix[j+1:len(_weight[keys_list[i]])]))
+                _weight[keys_list[i+1]]=torch.cat((bias_matrix[0:j],bias_matrix[j+1:len(_weight[keys_list[i]])+1]))
+            if i is 0:
+                _weight[keys_list[i+2]].resize_(alpha,beta,3,3)
+            elif i is 2:
+                _weight[keys_list[i+2]].resize_(beta,gamma,3,3)
+            elif i is 4:
+                _weight[keys_list[i+2]].resize_(gamma,upscale_factor ** 2,3,3)
+            _model.load_state_dict(_weight)
+            _model=_model.cuda()
+            if retrain is True:
+                for k in range(0,epoch):
+                    _train(_model,k)
+            prnr=PSNR(_model)
+            print('conv:',i,' num:',j,' psnr:',prnr,' size:',temp_weight)
+            psnr_list.append(tuple([i,j,prnr,temp_weight]))
+    return psnr_list

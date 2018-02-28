@@ -56,3 +56,10 @@ train=Net(opt.upscale_factor)
 model=torch.load(opt.model)
 keys=model.keys()
 criterion = nn.MSELoss()
+
+pruning=100
+for _ in range(1,pruning):
+    lista=cal_pruning(train,model,epoch=1)
+    indexa=rank(lista)
+    _pruning(train,model,indexa,epoch=1)
+    print(_," 번째 pruning 완료")
