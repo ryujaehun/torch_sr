@@ -10,6 +10,8 @@ from torch.utils.data import DataLoader
 from utils.data import get_training_set, get_test_set
 import datetime,random,os,csv
 from torch.nn.modules.module import _addindent
+
+
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Resolution')
 parser.add_argument('--upscale_factor', type=int, default=2, required=False, help="super resolution upscale factor")
@@ -22,11 +24,13 @@ parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=11, help='number of threads for data loader to use')
 parser.add_argument('--model', type=int, default='1', help='choose a model')
 
+
 opt = parser.parse_args()
 name=opt.data
 if opt.model is 1:
     from net.model import Net
     name+=' default_model_non_depthwise'
+
 elif opt.model is 2:
     from net.mymodel_dw import Net
     name+=' default_model_depthwise'
