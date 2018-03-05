@@ -8,10 +8,11 @@ from net.model10 import Net
 import numpy as np
 import os
 import math
+from utils.metric import psnr,ssim,ms_ssim
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
-parser.add_argument('--model_name', type=str,default='model_epoch_399.pth' ,required=False, help='model file to use')
+parser.add_argument('--model_name', type=str,default='model_epoch_400.pth' ,required=False, help='model file to use')
 parser.add_argument('--output_filename', default='result',type=str, help='where to save the output image')
 parser.add_argument('--cuda', action='store_true', required=False, help='use cuda')
 parser.add_argument('--dataset', default='Set5', type=str,required=False, help='use cuda')
@@ -53,6 +54,6 @@ out_img_cb = cb.resize(out_img_y.size, Image.BICUBIC)
 out_img_cr = cr.resize(out_img_y.size, Image.BICUBIC)
 out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
 print(' Our PSNR is ',psnr(np.array(out_img),np.array(img_hr)))
-
 print(' BICUBIC PSNR is ',psnr(np.array(img1),np.array(img_hr)))
+
 os.chdir(curr)

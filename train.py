@@ -50,6 +50,10 @@ elif opt.model is 8:
 elif opt.model is 8:
     from net.model8 import Net
     name='model 8'
+
+elif opt.model is 9:
+    from net.model9 import Net
+    name='model 9'
 elif opt.model is 11:
     from net.model11 import Net
     name='model 8'
