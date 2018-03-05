@@ -50,8 +50,8 @@ elif opt.model is 8:
 elif opt.model is 8:
     from net.model8 import Net
     name='model 8'
-elif opt.model is 9:
-    from net.model9 import Net
+elif opt.model is 11:
+    from net.model11 import Net
     name='model 8'
 elif opt.model is 10:
     from net.model10 import Net
@@ -160,9 +160,9 @@ def test(epoch):
 
 
 def checkpoint(epoch):
-    model_out_path = "model_epoch_{}".format(epoch)
+    model_out_path = "model_epoch_{}.pth".format(epoch)
     model_out_path=os.path.join(os.path.join(os.getcwd(),_time),model_out_path)
-    torch.save(model.state_dict(), model_out_path)
+    torch.save(model, model_out_path)
 
     f.write("Checkpoint saved to {}".format(model_out_path))
     print("Checkpoint saved to {}".format(model_out_path))
