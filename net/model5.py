@@ -8,12 +8,16 @@ class Net(nn.Module):
         super(Net, self).__init__()
 
         self.relu = nn.RReLU()
-        self.conv1 = nn.Conv2d(1, 64, (5, 5), (1, 1), (2, 2))
-        self.convdw2=nn.Conv2d(64,64,3,1,1,groups=64,bias=True)
-        self.convpw2=nn.Conv2d(64,64,1,1,0,bias=True)
+        self.conv1 = nn.Conv2d(1, 64, (3, 3), (1, 1), (1, 1))
 
-        self.convdw3=nn.Conv2d(64,64,3,1,1,groups=64,bias=True)
-        self.convpw3=nn.Conv2d(64,32,1,1,0,bias=True)
+        self.convdw2=nn.Conv2d(64,64,(5,1),(1,1),(2,0),groups=64,bias=True)
+        self.convpw2=nn.Conv2d(64,32,1,1,0,bias=True)
+
+        self.convdw3=nn.Conv2d(32,32,(5,1),(1,1),(2,0),groups=32,bias=True)
+        self.convpw3=nn.Conv2d(32,16,1,1,0,bias=True)
+
+        self.convdw4=nn.Conv2d(16,16,(5,1),(1,1),(2,0),groups=16,bias=True)
+        self.convpw4=nn.Conv2d(16,8,1,1,0,bias=True)
 
         self.conv4 = nn.Conv2d(32, upscale_factor ** 2, (3, 3), (1, 1), (1, 1))
         self.pixel_shuffle = nn.PixelShuffle(upscale_factor)
@@ -26,6 +30,8 @@ class Net(nn.Module):
         x = self.relu(self.convpw2(x))
         x = self.convdw3(x)
         x = self.relu(self.convpw3(x))
+        x = self.convdw4(x)
+        x = self.relu(self.convpw4(x))
         x = self.pixel_shuffle(self.conv4(x))
         return x
 
@@ -35,4 +41,6 @@ class Net(nn.Module):
         init.orthogonal(self.convpw2.weight, init.calculate_gain('relu'))
         init.orthogonal(self.convdw3.weight, init.calculate_gain('relu'))
         init.orthogonal(self.convpw3.weight, init.calculate_gain('relu'))
+        init.orthogonal(self.convdw4.weight, init.calculate_gain('relu'))
+        init.orthogonal(self.convpw4.weight, init.calculate_gain('relu'))
         init.orthogonal(self.conv4.weight)

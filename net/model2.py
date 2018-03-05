@@ -31,8 +31,8 @@ class Net(nn.Module):
 
     def _initialize_weights(self):
         init.orthogonal(self.conv1.weight, init.calculate_gain('relu'))
-        init.orthogonal(self.convdw2.weight, init.calculate_gain('relu'))
+        init.orthogonal(self.convdw2.weight)
         init.orthogonal(self.convpw2.weight, init.calculate_gain('relu'))
-        init.orthogonal(self.convdw3.weight, init.calculate_gain('relu'))
+        init.orthogonal(self.convdw3.weight)
         init.orthogonal(self.convpw3.weight, init.calculate_gain('relu'))
         init.orthogonal(self.conv4.weight)
