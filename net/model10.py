@@ -23,9 +23,9 @@ class Net(nn.Module):
     def forward(self, x):
         x = self.relu(self.conv1(x))
         x = self.convdw2(x)
-        x = self.relu(self.convpw2(x))
+        x = (self.convpw2(x))
         x = self.convdw3(x)
-        x = self.relu(self.convpw3(x))
+        x = (self.convpw3(x))
         x = self.pixel_shuffle(self.conv4(x))
         return x
 

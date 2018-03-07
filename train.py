@@ -25,46 +25,46 @@ opt = parser.parse_args()
 name=''
 if opt.model is 1:
     from net.model1 import Net
-    name='model 1 '
+    name='model_1 '
 elif opt.model is 2:
     from net.model2 import Net
-    name='model 2 '
+    name='model_2 '
 elif opt.model is 3:
     from net.model3 import Net
-    name='model 3 '
+    name='model_3 '
 elif opt.model is 4:
     from net.model4 import Net
-    name='model 4'
+    name='model_4'
 elif opt.model is 5:
     from net.model5 import Net
-    name='model 5'
+    name='model_5'
 elif opt.model is 6:
     from net.model6 import Net
-    name='model 6'
+    name='model_6'
 elif opt.model is 7:
     from net.model7 import Net
-    name='model 7'
+    name='model_7'
 elif opt.model is 8:
     from net.model8 import Net
-    name='model 8'
+    name='model_8'
 elif opt.model is 8:
     from net.model8 import Net
-    name='model 8'
+    name='model_8'
 
 elif opt.model is 9:
     from net.model9 import Net
-    name='model 9'
+    name='model_9'
 elif opt.model is 11:
     from net.model11 import Net
-    name='model 8'
+    name='model_8'
 elif opt.model is 10:
     from net.model10 import Net
-    name='model 10'
+    name='model_10'
 else:
     print("illigel model!!\n")
 
 
-_time="result/"+str(datetime.datetime.now())[:10]+"_"+str(datetime.datetime.now())[11:-7]
+_time="result/"+name+str(datetime.datetime.now())[:10]+"_"+str(datetime.datetime.now())[11:-7]
 os.makedirs(_time)
 f = open(os.path.join(os.path.join(os.getcwd(),_time),name+".txt"), 'w')
 f.write(str(opt))
@@ -105,9 +105,9 @@ model = Net(upscale_factor=opt.upscale_factor)
 criterion = nn.MSELoss()
 
 if cuda:
-    if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        model = nn.DataParallel(model)
+    #if torch.cuda.device_count() > 1:
+        #print("Let's use", torch.cuda.device_count(), "GPUs!")
+        #model = nn.DataParallel(model)
     if torch.cuda.is_available():
         model = model.cuda()
     criterion = criterion.cuda()
