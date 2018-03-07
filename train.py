@@ -105,9 +105,9 @@ model = Net(upscale_factor=opt.upscale_factor)
 criterion = nn.MSELoss()
 
 if cuda:
-    #if torch.cuda.device_count() > 1:
-        #print("Let's use", torch.cuda.device_count(), "GPUs!")
-        #model = nn.DataParallel(model)
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        model = nn.DataParallel(model)
     if torch.cuda.is_available():
         model = model.cuda()
     criterion = criterion.cuda()

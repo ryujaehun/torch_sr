@@ -9,10 +9,10 @@ class Net(nn.Module):
 
         self.relu = nn.ReLU()
         self.conv1 = nn.Conv2d(1, 64, (3, 3), (1, 1), (1, 1))
-        self.convdw2=nn.Conv2d(64,64,(5,1),1,(2,1),groups=64,bias=True)
-        self.convpw2=nn.Conv2d(64,32,(3,1),1,(1,0),bias=True)
+        self.convdw2=nn.Conv2d(64,64,(5,1),1,(2,0),groups=64,bias=True)
+        self.convpw2=nn.Conv2d(64,64,(3,1),1,(1,0),bias=True)
 
-        self.convdw3=nn.Conv2d(64,64,(5,1),1,(2,1),groups=64,bias=True)
+        self.convdw3=nn.Conv2d(64,64,(5,1),1,(2,0),groups=64,bias=True)
         self.convpw3=nn.Conv2d(64,32,(3,1),1,(1,0),bias=True)
 
         self.conv4 = nn.Conv2d(32, upscale_factor ** 2, (3, 3), (1, 1), (1, 1))
