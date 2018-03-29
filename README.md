@@ -8,3 +8,4 @@
 * implement psnr to skimage
 * inference 3 dataset (set5,set14,BSD100)
 * drawing info result
+* bmp !

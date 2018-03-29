@@ -6,7 +6,7 @@ from PIL import Image
 
 
 def is_image_file(filename):
-    return any(filename.endswith(extension) for extension in [".png", ".jpg", ".JPEG",".JPEG"])
+    return any(filename.endswith(extension) for extension in [".png", ".jpg", ".JPEG",".JPEG",'.bmp'])
 
 
 def load_img(filepath):
