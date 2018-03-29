@@ -7,7 +7,7 @@ from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
 from utils.dataset import DatasetFromFolder
 
 
-def load_data(dest="BSDS300"):
+def load_data(dest="COCO"):
     output_image_dir = join('dataset', dest+"/images")
     '''
     if not exists(output_image_dir):
