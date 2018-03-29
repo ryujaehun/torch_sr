@@ -22,6 +22,8 @@ parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Defau
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=11, help='number of threads for data loader to use')
 parser.add_argument('--model', type=int, default='1', help='name of log file name')
+parser.add_argument('--dict', type=bool, default='False', help='Saveing option dict')
+parser.add_argument('--save_interval','-s', type=int, default='10', help='saveing interval')
 
 opt = parser.parse_args()
 name=''
@@ -153,19 +155,23 @@ def adjust_learning_rate(optimizer, epoch):
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
     logger.scalar_summary('learning rate',lr,epoch)
-def checkpoint(epoch):
+def checkpoint(epoch,_dict=False):
     model_out_path = "model_epoch_{}.pth".format(epoch)
-    model_out_dict_path = "model_dict_epoch_{}".format(epoch)
+    if _dict is True:
+        model_out_dict_path = "model_dict_epoch_{}".format(epoch)
     model_out_path=os.path.join(os.path.join(os.getcwd(),_time),model_out_path)
-    model_out_dict_path=os.path.join(os.path.join(os.getcwd(),_time),model_out_dict_path)
+    if _dict is True:
+        model_out_dict_path=os.path.join(os.path.join(os.getcwd(),_time),model_out_dict_path)
     torch.save(model, model_out_path)
-    torch.save(model.state_dict(), model_out_dict_path)
+    if _dict is True:
+        torch.save(model.state_dict(), model_out_dict_path)
     print("Checkpoint pth saved to {}".format(model_out_path))
-    print("Checkpoint dict saved to {}".format(model_out_dict_path))
+    if _dict is True:
+        print("Checkpoint dict saved to {}".format(model_out_dict_path))
 
 for epoch in range(1, opt.nEpochs + 1):
     adjust_learning_rate(optimizer, epoch)
     train(epoch)
     test(epoch)
-    if epoch%10 ==0:
-        checkpoint(epoch)
+    if epoch%opt.save_interval==0:
+        checkpoint(epoch,_dict=opt.dict)

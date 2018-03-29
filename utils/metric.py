@@ -1,4 +1,4 @@
-from skimage import img_as_float 
+from skimage import img_as_float
 from skimage.measure import compare_psnr #as psnr
 from skimage.measure import compare_ssim #as ssim
 
