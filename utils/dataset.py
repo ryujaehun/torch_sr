@@ -1,5 +1,5 @@
+#!/usr/bin/python3
 import torch.utils.data as data
-
 from os import listdir
 from os.path import join
 from PIL import Image

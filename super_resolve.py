@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from __future__ import print_function
 import argparse
 import torch
@@ -6,7 +7,6 @@ from PIL import Image,ImageFont, ImageDraw
 from torchvision.transforms import ToTensor
 import numpy as np
 import os
-import math
 from utils.metric import psnr,ssim
 
 # Training settings
@@ -46,7 +46,6 @@ def inference(epoch,savepath,datapath,name,dataset):
     out_img_cb = cb.resize(out_img_y.size, Image.BICUBIC)
     out_img_cr = cr.resize(out_img_y.size, Image.BICUBIC)
     out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
-
     #여기까지 inference code
     # psnr 및 ssim 을 구해서 pillow 에 draw 한다.
     global matrix
@@ -83,51 +82,48 @@ def inference(epoch,savepath,datapath,name,dataset):
     draw.text((0, 20), "Size:"+str(img.size[0])+" x "+str(img.size[1]),font=font,fill=(0,0,0,255))
     img.save(os.path.join(savepath,dataset+"_"+name[0:13]+'_LR.png'),"PNG")
 
+if __name__ == "__main__":
+    opt = parser.parse_args()
+    model=torch.load(opt.model_name)
+    print(opt)
+    datalist=['Set5','Set14','BSD100']
+    for dl in datalist:
+        if os.path.isdir(dl) is False:
+            os.makedirs(dl)
+        savepath=os.path.join(os.getcwd(),dl)
+        datapath=os.path.join(os.getcwd(),'dataset/data/'+dl+'/image_SRF_'+str(opt.upscale_factor))
+        name='img_000_SRF_2_LR.png'
+        if opt.upscale_factor is not 2:
+            name=name.replace("2",str(opt.upscale_factor))
+        if dl is "BSD100":
+            matrix=[0]*4
+            # 0: BICUBIC PSNR 1: SR PSNR 2: BICUBIC SSIM 3: SR SSIM
+            for i in range(1,101):
+                inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
 
-opt = parser.parse_args()
-model=torch.load(opt.model_name)
-print(opt)
+            if opt.visual <= 2:
+                print('BSD100 average BICUBIC PSNR: ',matrix[0]/100)
+                print('BSD100 average OURS PSNR: ',matrix[1]/100)
+                print('BSD100 average BICUBIC SSIM: ',matrix[2]/100)
+                print('BSD100 average OURS SSIM: ',matrix[3]/100)
+        elif dl is "Set5":
+            matrix=[0]*4
+            for i in range(1,6):
+                inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
 
-
-
-datalist=['Set5']#,'Set14','BSD100']
-for dl in datalist:
-    if os.path.isdir(dl) is False:
-        os.makedirs(dl)
-    savepath=os.path.join(os.getcwd(),dl)
-    datapath=os.path.join(os.getcwd(),'dataset/data/'+dl+'/image_SRF_'+str(opt.upscale_factor))
-    name='img_000_SRF_2_LR.png'
-    if opt.upscale_factor is not 2:
-        name=name.replace("2",str(opt.upscale_factor))
-    if dl is "BSD100":
-        matrix=[0]*4
-        # 0: BICUBIC PSNR 1: SR PSNR 2: BICUBIC SSIM 3: SR SSIM
-        for i in range(1,101):
-            inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
-
-        if opt.visual <= 2:
-            print('BSD100 average BICUBIC PSNR: ',matrix[0]/100)
-            print('BSD100 average OURS PSNR: ',matrix[1]/100)
-            print('BSD100 average BICUBIC SSIM: ',matrix[2]/100)
-            print('BSD100 average OURS SSIM: ',matrix[3]/100)
-    elif dl is "Set5":
-        matrix=[0]*4
-        for i in range(1,6):
-            inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
-
-        if opt.visual <= 2:
-            print('Set5 average BICUBIC PSNR: ',matrix[0]/5)
-            print('Set5 average OURS PSNR: ',matrix[1]/5)
-            print('Set5 average BICUBIC SSIM: ',matrix[2]/5)
-            print('Set5 average OURS SSIM: ',matrix[3]/5)
-    elif dl is "Set14":
-        matrix=[0]*4
-        for i in range(1,15):
-            inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
-        if opt.visual <= 2:
-            print('Set14 average BICUBIC PSNR: ',matrix[0]/14)
-            print('Set14 average OURS PSNR: ',matrix[1]/14)
-            print('Set14 average BICUBIC SSIM: ',matrix[2]/14)
-            print('Set14 average OURS SSIM: ',matrix[3]/14)
-    else:
-        print("Finish!")
+            if opt.visual <= 2:
+                print('Set5 average BICUBIC PSNR: ',matrix[0]/5)
+                print('Set5 average OURS PSNR: ',matrix[1]/5)
+                print('Set5 average BICUBIC SSIM: ',matrix[2]/5)
+                print('Set5 average OURS SSIM: ',matrix[3]/5)
+        elif dl is "Set14":
+            matrix=[0]*4
+            for i in range(1,15):
+                inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
+            if opt.visual <= 2:
+                print('Set14 average BICUBIC PSNR: ',matrix[0]/14)
+                print('Set14 average OURS PSNR: ',matrix[1]/14)
+                print('Set14 average BICUBIC SSIM: ',matrix[2]/14)
+                print('Set14 average OURS SSIM: ',matrix[3]/14)
+        else:
+            print("Finish!")

@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from os.path import exists, join, basename
 from os import makedirs, remove
 from six.moves import urllib
