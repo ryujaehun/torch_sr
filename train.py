@@ -17,10 +17,10 @@ from torchvision.transforms import ToTensor
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Resolution')
 parser.add_argument('--upscale_factor', type=int,default=2, required=False, help="super resolution upscale factor")
-parser.add_argument('--data', type=str,default='BSDS300',required=False, help="train data path")
+parser.add_argument('--data', type=str,default='SRCNN',required=False, help="train data path")
 parser.add_argument('--batchSize','-b', type=int, default=16, help='training batch size')
-parser.add_argument('--testBatchSize', type=int, default=100, help='testing batch size')
-parser.add_argument('--nEpochs','-n', type=int, default=10, help='number of epochs to train for')
+parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
+parser.add_argument('--nEpochs','-n', type=int, default=400, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=11, help='number of threads for data loader to use')
@@ -223,6 +223,7 @@ if __name__ == "__main__":
             print('BSD100 average BICUBIC SSIM: ',matrix[2]/100)
             print('BSD100 average OURS SSIM: ',matrix[3]/100)
         elif dl is "Set5":
+            #name=name.replace("png",'bmp')
             matrix=[0]*4
             for i in range(1,6):
                 inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
@@ -232,6 +233,7 @@ if __name__ == "__main__":
             print('Set5 average OURS SSIM: ',matrix[3]/5)
         elif dl is "Set14":
             matrix=[0]*4
+            #name=name.replace("png",'bmp')
             for i in range(1,15):
                 inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
             print('Set14 average BICUBIC PSNR: ',matrix[0]/14)
