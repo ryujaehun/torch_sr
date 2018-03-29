@@ -15,7 +15,7 @@ parser.add_argument('--model_name', type=str,default='model_epoch_400.pth' ,requ
 parser.add_argument('--output_filename', default='result',type=str, help='where to save the output image')
 parser.add_argument('--cuda', action='store_true',  default=True,required=False, help='use cuda')
 parser.add_argument('--upscale_factor', default='2', type=str,required=False, help='model')
-parser.add_argument('--visual','-v' ,default=2, type=int,required=False, help='print psnr and ssim')
+parser.add_argument('--visual','-v' ,default=1, type=int,required=False, help='print psnr and ssim')
 #parser.add_argument('--dataset', default='Set5', type=str,required=False, help='use cuda')
 #parser.add_argument('--model', default='01', type=str,required=False, help='model')
 def inference(epoch,savepath,datapath,name,dataset):
@@ -49,29 +49,29 @@ def inference(epoch,savepath,datapath,name,dataset):
 
     #여기까지 inference code
     # psnr 및 ssim 을 구해서 pillow 에 draw 한다.
-    global metrix
+    global matrix
     img=img.convert('RGB')
     if dataset is "Set14" and epoch is 3:
         img_bicubic=img_bicubic.convert('RGB')
         img_hr=img_hr.convert('RGB')
-    metrix=[psnr(img_bicubic,img_hr),psnr(out_img,img_hr),ssim(img_bicubic,img_hr),ssim(out_img,img_hr)]
+    matrix=[sum(x) for x in zip(matrix, [psnr(img_bicubic,img_hr),psnr(out_img,img_hr),ssim(img_bicubic,img_hr),ssim(out_img,img_hr)])]
     # 0: BICUBIC PSNR 1: SR PSNR 2: BICUBIC SSIM 3: SR SSIM
     if opt.visual is 2:
         print(dataset,i,'th')
-        print(' BICUBIC PSNR is ',metrix[0])
-        print(' Our PSNR is ',metrix[1])
-        print(' BICUBIC SSIM is ',metrix[2])
-        print(' Our SSIM is ',metrix[3])
+        print(' BICUBIC PSNR is ',psnr(img_bicubic,img_hr))
+        print(' Our PSNR is ',psnr(out_img,img_hr))
+        print(' BICUBIC SSIM is ',ssim(img_bicubic,img_hr))
+        print(' Our SSIM is ',ssim(out_img,img_hr))
     font = ImageFont.truetype("arial.ttf", 20)
     draw = ImageDraw.Draw(img_bicubic)
     draw.text((0, 0), "BICUBIC",font=font,fill=(0,0,0,255))
-    draw.text((0, 20), "SSIM:"+str(metrix[2]),font=font,fill=(0,0,0,255))
-    draw.text((0, 40), "PSNR:"+str(metrix[0]),font=font,fill=(0,0,0,255))
+    draw.text((0, 20), "SSIM:"+str(ssim(img_bicubic,img_hr)),font=font,fill=(0,0,0,255))
+    draw.text((0, 40), "PSNR:"+str(psnr(img_bicubic,img_hr)),font=font,fill=(0,0,0,255))
     img_bicubic.save(os.path.join(savepath,dataset+"_"+name[0:13]+'_bicubic.png'),"PNG")
     draw = ImageDraw.Draw(out_img)
     draw.text((0, 0), "OURS",font=font,fill=(0,0,0,255))
-    draw.text((0, 20), "SSIM:"+str(metrix[3]),font=font,fill=(0,0,0,255))
-    draw.text((0, 40), "PSNR:"+str(metrix[1]),font=font,fill=(0,0,0,255))
+    draw.text((0, 20), "SSIM:"+str(ssim(out_img,img_hr)),font=font,fill=(0,0,0,255))
+    draw.text((0, 40), "PSNR:"+str(psnr(out_img,img_hr)),font=font,fill=(0,0,0,255))
     out_img.save(os.path.join(savepath,dataset+"_"+name[0:13]+'_superResolution.png'),"PNG")
     draw = ImageDraw.Draw(img_hr)
     draw.text((0, 0), "Ground True High Resolution",font=font,fill=(0,0,0,255))
@@ -90,7 +90,7 @@ print(opt)
 
 
 
-datalist=['Set14']
+datalist=['Set5']#,'Set14','BSD100']
 for dl in datalist:
     if os.path.isdir(dl) is False:
         os.makedirs(dl)
@@ -104,7 +104,8 @@ for dl in datalist:
         # 0: BICUBIC PSNR 1: SR PSNR 2: BICUBIC SSIM 3: SR SSIM
         for i in range(1,101):
             inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
-        if opt.visual < 2:
+
+        if opt.visual <= 2:
             print('BSD100 average BICUBIC PSNR: ',matrix[0]/100)
             print('BSD100 average OURS PSNR: ',matrix[1]/100)
             print('BSD100 average BICUBIC SSIM: ',matrix[2]/100)
@@ -113,7 +114,8 @@ for dl in datalist:
         matrix=[0]*4
         for i in range(1,6):
             inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
-        if opt.visual < 2:
+
+        if opt.visual <= 2:
             print('Set5 average BICUBIC PSNR: ',matrix[0]/5)
             print('Set5 average OURS PSNR: ',matrix[1]/5)
             print('Set5 average BICUBIC SSIM: ',matrix[2]/5)
@@ -122,7 +124,7 @@ for dl in datalist:
         matrix=[0]*4
         for i in range(1,15):
             inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
-        if opt.visual < 2:
+        if opt.visual <= 2:
             print('Set14 average BICUBIC PSNR: ',matrix[0]/14)
             print('Set14 average OURS PSNR: ',matrix[1]/14)
             print('Set14 average BICUBIC SSIM: ',matrix[2]/14)
