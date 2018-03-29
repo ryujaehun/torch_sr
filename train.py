@@ -9,7 +9,7 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 from utils.data import get_training_set, get_test_set
 import datetime,random,os,csv
-from utils.logger import Logger
+from utils.logger import Logger,to_np,to_var
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Resolution')
@@ -119,11 +119,15 @@ def train(epoch):
         epoch_loss += loss.data[0]
         loss.backward()
         optimizer.step()
-        logger.scalar_summary('loss',loss.data[0], iteration+epoch*len(training_data_loader))
+        logger.scalar_summary('loss',loss.data[0], iteration+epoch*len(training_data_loader)+1)
         print("===> Epoch[{}]({}/{}): Loss: {:.4f}".format(epoch, iteration, len(training_data_loader), loss.data[0]))
 
-    logger.scalar_summary('total loss', epoch_loss / len(training_data_loader), epoch)
+    logger.scalar_summary('total loss', epoch_loss / len(training_data_loader), epoch+1)
     print("===> Epoch {} Complete: Avg. Loss: {:.4f}".format(epoch, epoch_loss / len(training_data_loader)))
+    for tag, value in model.named_parameters():
+            tag = tag.replace('.', '/')
+            logger.histo_summary(tag, to_np(value), epoch+1)
+            logger.histo_summary(tag+'/grad', to_np(value.grad), epoch+1)
 
 
 def test(epoch):

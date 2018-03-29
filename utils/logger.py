@@ -2,6 +2,8 @@
 import tensorflow as tf
 import numpy as np
 import scipy.misc 
+import torch
+from torch.autograd import Variable
 try:
     from StringIO import StringIO  # Python 2.7
 except ImportError:
@@ -69,3 +71,10 @@ class Logger(object):
         summary = tf.Summary(value=[tf.Summary.Value(tag=tag, histo=hist)])
         self.writer.add_summary(summary, step)
         self.writer.flush()
+def to_np(x):
+    return x.data.cpu().numpy()
+
+def to_var(x):
+    if torch.cuda.is_available():
+        x = x.cuda()
+    return Variable(x)    
