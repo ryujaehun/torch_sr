@@ -109,10 +109,10 @@ if __name__ == "__main__":
                 print('BSD100 average OURS PSNR: ',matrix[1]/100)
                 print('BSD100 average BICUBIC SSIM: ',matrix[2]/100)
                 print('BSD100 average OURS SSIM: ',matrix[3]/100)
-                f.write('BSD100 average BICUBIC PSNR: ',matrix[0]/100)
-                f.write('\nBSD100 average OURS PSNR: ',matrix[1]/100)
-                f.write('\nBSD100 average BICUBIC SSIM: ',matrix[2]/100)
-                f.write('\nBSD100 average OURS SSIM: ',matrix[3]/100)
+                f.write('BSD100 average BICUBIC PSNR: '+str(matrix[0]/100))
+                f.write('\nBSD100 average OURS PSNR: '+str(matrix[1]/100))
+                f.write('\nBSD100 average BICUBIC SSIM: '+str(matrix[2]/100))
+                f.write('\nBSD100 average OURS SSIM: '+str(matrix[3]/100))
         elif dl is "Set5":
             matrix=np.zeros(4)
             for i in range(1,6):
@@ -122,10 +122,10 @@ if __name__ == "__main__":
                 print('Set5 average OURS PSNR: ',matrix[1]/5)
                 print('Set5 average BICUBIC SSIM: ',matrix[2]/5)
                 print('Set5 average OURS SSIM: ',matrix[3]/5)
-                f.write('\nSet5 average BICUBIC PSNR: ',matrix[0]/5)
-                f.write('\nSet5 average OURS PSNR: ',matrix[1]/5)
-                f.write('\nSet5 average BICUBIC SSIM: ',matrix[2]/5)
-                f.write('\nSet5 average OURS SSIM: ',matrix[3]/5)
+                f.write('\nSet5 average BICUBIC PSNR: '+str(matrix[0]/5))
+                f.write('\nSet5 average OURS PSNR: '+str(matrix[1]/5))
+                f.write('\nSet5 average BICUBIC SSIM: '+str(matrix[2]/5))
+                f.write('\nSet5 average OURS SSIM: '+str(matrix[3]/5))
         elif dl is "Set14":
             matrix=np.zeros(4)
             for i in range(1,15):
@@ -135,9 +135,9 @@ if __name__ == "__main__":
                 print('Set14 average OURS PSNR: ',matrix[1]/14)
                 print('Set14 average BICUBIC SSIM: ',matrix[2]/14)
                 print('Set14 average OURS SSIM: ',matrix[3]/14)
-                f.write('\nSet14 average BICUBIC PSNR: ',matrix[0]/14)
-                f.write('\nSet14 average OURS PSNR: ',matrix[1]/14)
-                f.write('\nSet14 average BICUBIC SSIM: ',matrix[2]/14)
-                f.write('\nSet14 average OURS SSIM: ',matrix[3]/14)
+                f.write('\nSet14 average BICUBIC PSNR: '+str(matrix[0]/14))
+                f.write('\nSet14 average OURS PSNR: '+str(matrix[1]/14))
+                f.write('\nSet14 average BICUBIC SSIM: '+str(matrix[2]/14))
+                f.write('\nSet14 average OURS SSIM: '+str(matrix[3]/14))
         else:
             print("Finish!")

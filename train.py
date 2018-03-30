@@ -19,9 +19,9 @@ from copy import deepcopy as dp
 parser = argparse.ArgumentParser(description='PyTorch Super Resolution')
 parser.add_argument('--upscale_factor','-u', type=int,default=2, required=False, help="super resolution upscale factor")
 parser.add_argument('--data', type=str,default='SRCNN',required=False, help="train data path")
-parser.add_argument('--batchSize','-b', type=int, default=12, help='training batch size')
+parser.add_argument('--batchSize','-b', type=int, default=8, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-parser.add_argument('--nEpochs','-n', type=int, default=10, help='number of epochs to train for')
+parser.add_argument('--nEpochs','-n', type=int, default=400, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=11, help='number of threads for data loader to use')
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     datalist=['Set5','Set14','BSD100']
     for dl in datalist:
         savepath=os.path.join(os.path.join(os.getcwd(),_time),dl)
-        f = open(savepath+'psnr'+".txt"), 'w')
+        f = open(savepath+'psnr'+".txt", 'w')
         datapath=os.path.join(os.getcwd(),'dataset/data/'+dl+'/image_SRF_'+str(opt.upscale_factor))
         if os.path.isdir(savepath) is False:
             os.makedirs(savepath)
@@ -228,10 +228,10 @@ if __name__ == "__main__":
             print('BSD100 average OURS PSNR: ',matrix[1]/100)
             print('BSD100 average BICUBIC SSIM: ',matrix[2]/100)
             print('BSD100 average OURS SSIM: ',matrix[3]/100)
-            f.write('BSD100 average BICUBIC PSNR: ',matrix[0]/100)
-            f.write('\nBSD100 average OURS PSNR: ',matrix[1]/100)
-            f.write('\nBSD100 average BICUBIC SSIM: ',matrix[2]/100)
-            f.write('\nBSD100 average OURS SSIM: ',matrix[3]/100)
+            f.write('BSD100 average BICUBIC PSNR: '+str(matrix[0]/100))
+            f.write('\nBSD100 average OURS PSNR: '+str(matrix[1]/100))
+            f.write('\nBSD100 average BICUBIC SSIM: '+str(matrix[2]/100))
+            f.write('\nBSD100 average OURS SSIM: '+str(matrix[3]/100))
         elif dl is "Set5":
             matrix=np.zeros(4)
             for i in range(1,6):
@@ -240,10 +240,10 @@ if __name__ == "__main__":
             print('Set5 average OURS PSNR: ',matrix[1]/5)
             print('Set5 average BICUBIC SSIM: ',matrix[2]/5)
             print('Set5 average OURS SSIM: ',matrix[3]/5)
-            f.write('\nSet5 average BICUBIC PSNR: ',matrix[0]/5)
-            f.write('\nSet5 average OURS PSNR: ',matrix[1]/5)
-            f.write('\nSet5 average BICUBIC SSIM: ',matrix[2]/5)
-            f.write('\nSet5 average OURS SSIM: ',matrix[3]/5)
+            f.write('\nSet5 average BICUBIC PSNR: '+str(matrix[0]/5))
+            f.write('\nSet5 average OURS PSNR: '+str(matrix[1]/5))
+            f.write('\nSet5 average BICUBIC SSIM: '+str(matrix[2]/5))
+            f.write('\nSet5 average OURS SSIM: '+str(matrix[3]/5))
         elif dl is "Set14":
             matrix=np.zeros(4)
             for i in range(1,15):
@@ -252,9 +252,9 @@ if __name__ == "__main__":
             print('Set14 average OURS PSNR: ',matrix[1]/14)
             print('Set14 average BICUBIC SSIM: ',matrix[2]/14)
             print('Set14 average OURS SSIM: ',matrix[3]/14)
-            f.write('\nSet14 average BICUBIC PSNR: ',matrix[0]/14)
-            f.write('\nSet14 average OURS PSNR: ',matrix[1]/14)
-            f.write('\nSet14 average BICUBIC SSIM: ',matrix[2]/14)
-            f.write('\nSet14 average OURS SSIM: ',matrix[3]/14)
+            f.write('\nSet14 average BICUBIC PSNR: '+str(matrix[0]/14))
+            f.write('\nSet14 average OURS PSNR: '+str(matrix[1]/14))
+            f.write('\nSet14 average BICUBIC SSIM: '+str(matrix[2]/14))
+            f.write('\nSet14 average OURS SSIM: '+str(matrix[3]/14))
         else:
             print("Finish!")

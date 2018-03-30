@@ -15,7 +15,7 @@ class Net(nn.Module):
         self.convdw3=nn.Conv2d(32,32,(5,1),1,(2,0),groups=32,bias=False)
         self.convpw3=nn.Conv2d(32,32,(1,1),1,0,bias=False)
 
-        self.convdw4=nn.Conv2d(32,32,(5,1),1,(1,1),groups=32,bias=False)
+        self.convdw4=nn.Conv2d(32,32,(5,1),1,(2,0),groups=32,bias=False)
         self.convpw4=nn.Conv2d(32,16,(1,1),1,0,bias=False)
 
         self.conv5 = nn.Conv2d(16, upscale_factor ** 2, (3, 3), (1, 1), (1, 1),bias=False)
