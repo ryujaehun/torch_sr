@@ -14,13 +14,14 @@ from utils.logger import Logger,to_np
 from utils.metric import psnr,ssim
 from PIL import Image,ImageFont, ImageDraw
 from torchvision.transforms import ToTensor
+from copy import deepcopy as dp
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Resolution')
-parser.add_argument('--upscale_factor', type=int,default=2, required=False, help="super resolution upscale factor")
+parser.add_argument('--upscale_factor','-u', type=int,default=2, required=False, help="super resolution upscale factor")
 parser.add_argument('--data', type=str,default='SRCNN',required=False, help="train data path")
-parser.add_argument('--batchSize','-b', type=int, default=16, help='training batch size')
+parser.add_argument('--batchSize','-b', type=int, default=12, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-parser.add_argument('--nEpochs','-n', type=int, default=400, help='number of epochs to train for')
+parser.add_argument('--nEpochs','-n', type=int, default=10, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=11, help='number of threads for data loader to use')
@@ -170,33 +171,37 @@ def inference(epoch,savepath,datapath,name,dataset):
     out_img_cb = cb.resize(out_img_y.size, Image.BICUBIC)
     out_img_cr = cr.resize(out_img_y.size, Image.BICUBIC)
     out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
-    global matrix
+
     img=img.convert('RGB')
     if dataset is "Set14" and epoch is 3:
         img_bicubic=img_bicubic.convert('RGB')
         img_hr=img_hr.convert('RGB')
-    matrix=[sum(x) for x in zip(matrix, [psnr(img_bicubic,img_hr),psnr(out_img,img_hr),ssim(img_bicubic,img_hr),ssim(out_img,img_hr)])]
-    font = ImageFont.truetype("arial.ttf", 20)
+    matrix=[dp(psnr(img_bicubic,img_hr)),dp(psnr(out_img,img_hr)),dp(ssim(img_bicubic,img_hr)),dp(ssim(out_img,img_hr))]
+    font = ImageFont.truetype("arial.ttf", 12)
     draw = ImageDraw.Draw(img_bicubic)
+    draw.rectangle([0,0,120,36], fill=(255,255,255,255))
     draw.text((0, 0), "BICUBIC",font=font,fill=(0,0,0,255))
-    draw.text((0, 20), "SSIM:"+str(ssim(img_bicubic,img_hr)),font=font,fill=(0,0,0,255))
-    draw.text((0, 40), "PSNR:"+str(psnr(img_bicubic,img_hr)),font=font,fill=(0,0,0,255))
+    draw.text((0, 12), "SSIM:"+str(matrix[2]),font=font,fill=(0,0,0,255))
+    draw.text((0, 24), "PSNR:"+str(matrix[0]),font=font,fill=(0,0,0,255))
     img_bicubic.save(os.path.join(savepath,dataset+"_"+name[0:13]+'_bicubic.png'),"PNG")
     draw = ImageDraw.Draw(out_img)
+    draw.rectangle([0,0,120,36], fill=(255,255,255,255))
     draw.text((0, 0), "OURS",font=font,fill=(0,0,0,255))
-    draw.text((0, 20), "SSIM:"+str(ssim(out_img,img_hr)),font=font,fill=(0,0,0,255))
-    draw.text((0, 40), "PSNR:"+str(psnr(out_img,img_hr)),font=font,fill=(0,0,0,255))
+    draw.text((0, 12), "SSIM:"+str(matrix[3]),font=font,fill=(0,0,0,255))
+    draw.text((0, 24), "PSNR:"+str(matrix[1]),font=font,fill=(0,0,0,255))
     out_img.save(os.path.join(savepath,dataset+"_"+name[0:13]+'_superResolution.png'),"PNG")
     draw = ImageDraw.Draw(img_hr)
-    draw.text((0, 0), "Ground True High Resolution",font=font,fill=(0,0,0,255))
-    draw.text((0, 20), "Size:"+str(img_hr.size[0])+" x "+str(img_hr.size[1]),font=font,fill=(0,0,0,255))
+    draw.rectangle([0,0,120,24], fill=(255,255,255,255))
+    draw.text((0, 0), "Ground True HR",font=font,fill=(0,0,0,255))
+    draw.text((0, 12), "Size:"+str(img_hr.size[0])+" x "+str(img_hr.size[1]),font=font,fill=(0,0,0,255))
     img_hr.save(os.path.join(savepath,dataset+"_"+name[0:13]+'_HR.png'),"PNG")
     img=img.convert('RGB')
     draw = ImageDraw.Draw(img)
-    draw.text((0, 0), "Ground True Low Resolution",font=font,fill=(0,0,0,255))
-    draw.text((0, 20), "Size:"+str(img.size[0])+" x "+str(img.size[1]),font=font,fill=(0,0,0,255))
+    draw.rectangle([0,0,120,24], fill=(255,255,255,255))
+    draw.text((0, 0), "Ground True LR",font=font,fill=(0,0,0,255))
+    draw.text((0, 12), "Size:"+str(img.size[0])+" x "+str(img.size[1]),font=font,fill=(0,0,0,255))
     img.save(os.path.join(savepath,dataset+"_"+name[0:13]+'_LR.png'),"PNG")
-
+    return np.array(matrix)
 if __name__ == "__main__":
     for epoch in range(1, opt.nEpochs + 1):
         adjust_learning_rate(optimizer, epoch)
@@ -207,6 +212,7 @@ if __name__ == "__main__":
     datalist=['Set5','Set14','BSD100']
     for dl in datalist:
         savepath=os.path.join(os.path.join(os.getcwd(),_time),dl)
+        f = open(savepath+'psnr'+".txt"), 'w')
         datapath=os.path.join(os.getcwd(),'dataset/data/'+dl+'/image_SRF_'+str(opt.upscale_factor))
         if os.path.isdir(savepath) is False:
             os.makedirs(savepath)
@@ -214,31 +220,41 @@ if __name__ == "__main__":
         if opt.upscale_factor is not 2:
             name=name.replace("2",str(opt.upscale_factor))
         if dl is "BSD100":
-            matrix=[0]*4
+            matrix=np.zeros(4)
             # 0: BICUBIC PSNR 1: SR PSNR 2: BICUBIC SSIM 3: SR SSIM
             for i in range(1,101):
-                inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
+                matrix+=inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
             print('BSD100 average BICUBIC PSNR: ',matrix[0]/100)
             print('BSD100 average OURS PSNR: ',matrix[1]/100)
             print('BSD100 average BICUBIC SSIM: ',matrix[2]/100)
             print('BSD100 average OURS SSIM: ',matrix[3]/100)
+            f.write('BSD100 average BICUBIC PSNR: ',matrix[0]/100)
+            f.write('\nBSD100 average OURS PSNR: ',matrix[1]/100)
+            f.write('\nBSD100 average BICUBIC SSIM: ',matrix[2]/100)
+            f.write('\nBSD100 average OURS SSIM: ',matrix[3]/100)
         elif dl is "Set5":
-            #name=name.replace("png",'bmp')
-            matrix=[0]*4
+            matrix=np.zeros(4)
             for i in range(1,6):
-                inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
+                matrix+=inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
             print('Set5 average BICUBIC PSNR: ',matrix[0]/5)
             print('Set5 average OURS PSNR: ',matrix[1]/5)
             print('Set5 average BICUBIC SSIM: ',matrix[2]/5)
             print('Set5 average OURS SSIM: ',matrix[3]/5)
+            f.write('\nSet5 average BICUBIC PSNR: ',matrix[0]/5)
+            f.write('\nSet5 average OURS PSNR: ',matrix[1]/5)
+            f.write('\nSet5 average BICUBIC SSIM: ',matrix[2]/5)
+            f.write('\nSet5 average OURS SSIM: ',matrix[3]/5)
         elif dl is "Set14":
-            matrix=[0]*4
-            #name=name.replace("png",'bmp')
+            matrix=np.zeros(4)
             for i in range(1,15):
-                inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
+                matrix+=inference(epoch=i,savepath=savepath,datapath=datapath,name=name.replace("000",str(i).rjust(3, '0')),dataset=dl)
             print('Set14 average BICUBIC PSNR: ',matrix[0]/14)
             print('Set14 average OURS PSNR: ',matrix[1]/14)
             print('Set14 average BICUBIC SSIM: ',matrix[2]/14)
             print('Set14 average OURS SSIM: ',matrix[3]/14)
+            f.write('\nSet14 average BICUBIC PSNR: ',matrix[0]/14)
+            f.write('\nSet14 average OURS PSNR: ',matrix[1]/14)
+            f.write('\nSet14 average BICUBIC SSIM: ',matrix[2]/14)
+            f.write('\nSet14 average OURS SSIM: ',matrix[3]/14)
         else:
             print("Finish!")
