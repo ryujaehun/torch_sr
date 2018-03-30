@@ -7,7 +7,9 @@ from PIL import Image
 
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in [".png", ".jpg", ".JPEG",".JPEG",'.bmp'])
-
+    
+def is_video_file(filename):
+    return any(filename.endswith(extension) for extension in ['.mp4', '.avi', '.mpg', '.mkv', '.wmv', '.flv'])
 
 def load_img(filepath):
     img = Image.open(filepath).convert('YCbCr')
