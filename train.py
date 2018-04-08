@@ -23,8 +23,8 @@ parser.add_argument('--upscale_factor','-u', type=int,default=2, required=False,
 parser.add_argument('--data', type=str,default='OURS2',required=False, help="train data path")
 parser.add_argument('--batchSize','-b', type=int, default=32, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-parser.add_argument('--nEpochs','-n', type=int, default=400, help='number of epochs to train for')
-parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
+parser.add_argument('--nEpochs','-n', type=int, default=200, help='number of epochs to train for')
+parser.add_argument('--lr', type=float, default=0.02, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=11, help='number of threads for data loader to use')
 parser.add_argument('--model','-m', type=int, default='1', help='name of log file name')
@@ -139,7 +139,7 @@ def test(epoch):
     print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr / len(testing_data_loader)))
 def adjust_learning_rate(optimizer, epoch):
     """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
-    lr = opt.lr * (0.9 ** (epoch // 35))
+    lr = opt.lr * (0.9 ** (epoch // 19))
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
     logger.scalar_summary('learning rate',lr,epoch)
