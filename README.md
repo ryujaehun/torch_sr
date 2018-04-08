@@ -1,7 +1,7 @@
 # SUPERRESOLUTION
 ## TODO
-* apply Video
-* compare other model
+This branch is fix psnr bug!!:wq
+
 ## DONE
 * [Tensorboard](https://github.com/yunjey/pytorch-tutorial/tree/master/tutorials/04-utils/tensorboard)
 * make Inference script
