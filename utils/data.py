@@ -40,7 +40,8 @@ def input_transform(crop_size, upscale_factor):
     return Compose([
         CenterCrop(crop_size),
      #   Scale(crop_size // upscale_factor, interpolation=Image.BICUBIC),
-        Resize(crop_size // upscale_factor,interpolation=Image.LANCZOS),
+        #Resize(crop_size // upscale_factor,interpolation=Image.LANCZOS),
+        Resize(crop_size // upscale_factor,interpolation=Image.BICUBIC),
         ToTensor(),
     ])
 

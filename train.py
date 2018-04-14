@@ -158,8 +158,8 @@ def checkpoint(epoch,_dict=False):
 def inference(epoch,savepath,datapath,name,dataset):
     global model
     img = Image.open(os.path.join(datapath,name)).convert('YCbCr')
-    img_bicubic = Image.open(os.path.join(datapath,name))
-    img_hr=Image.open(os.path.join(datapath,name.replace('LR',"HR")))
+    img_bicubic = Image.open(os.path.join(datapath,name)).convert('YCbCr')
+    img_hr=Image.open(os.path.join(datapath,name.replace('LR',"HR"))).convert('YCbCr')
     y, cb, cr = img.split()
     input = Variable(ToTensor()(y)).view(1, -1, y.size[1], y.size[0])
     if opt.cuda:
@@ -177,7 +177,6 @@ def inference(epoch,savepath,datapath,name,dataset):
     out_img_cb = cb.resize(out_img_y.size, Image.BICUBIC)
     out_img_cr = cr.resize(out_img_y.size, Image.BICUBIC)
     out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
-
     img=img.convert('RGB')
     if dataset is "Set14" and epoch is 3:
         img_bicubic=img_bicubic.convert('RGB')
