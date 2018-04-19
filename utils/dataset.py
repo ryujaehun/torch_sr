@@ -32,6 +32,8 @@ class DatasetFromFolder(data.Dataset):
         if self.target_transform:
             target = self.target_transform(target)
 
+#        print(input.shape,target.shape)
+
         return input, target
 
     def __len__(self):

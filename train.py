@@ -10,7 +10,7 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 from utils.data import get_training_set, get_test_set
 import torch.backends.cudnn as cudnn
-
+from utils.dataset2 import DatasetFromHdf5
 import datetime,random,os
 from utils.logger import Logger,to_np
 from utils.metric import psnr,ssim
@@ -21,15 +21,15 @@ from copy import deepcopy as dp
 parser = argparse.ArgumentParser(description='PyTorch Super Resolution')
 parser.add_argument('--upscale_factor','-u', type=int,default=2, required=False, help="super resolution upscale factor")
 parser.add_argument('--data', type=str,default='OURS2',required=False, help="train data path")
-parser.add_argument('--batchSize','-b', type=int, default=32, help='training batch size')
+parser.add_argument('--batchSize','-b', type=int, default=256, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-parser.add_argument('--nEpochs','-n', type=int, default=150, help='number of epochs to train for')
+parser.add_argument('--nEpochs','-n', type=int, default=40, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
-parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
+parser.add_argument('--threads', type=int, default=1, help='number of threads for data loader to use')
 parser.add_argument('--model','-m', type=int, default='1', help='name of log file name')
 parser.add_argument('--dict', type=bool, default=False, help='Saveing option dict')
-parser.add_argument('--save_interval','-s', type=int, default='50', help='saveing interval')
+parser.add_argument('--save_interval','-s', type=int, default='40', help='saveing interval')
 opt = parser.parse_args()
 name=''
 
@@ -81,12 +81,17 @@ torch.manual_seed(random.randint(1,1000))
 if cuda:
     torch.cuda.manual_seed(random.randint(1,1000))
 print('===> Loading datasets')
-train_set = get_training_set(opt.upscale_factor,opt.data)
+#train_set = get_training_set(opt.upscale_factor,opt.data)
 test_set = get_test_set(opt.upscale_factor,opt.data)
-training_data_loader = DataLoader(dataset=train_set, num_workers=opt.threads, batch_size=opt.batchSize, shuffle=True)
-testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batch_size=opt.testBatchSize, shuffle=False)
-#train_set = DatasetFromHdf5("data/train.h5")
 #training_data_loader = DataLoader(dataset=train_set, num_workers=opt.threads, batch_size=opt.batchSize, shuffle=True)
+testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batch_size=opt.testBatchSize, shuffle=False)
+if opt.upscale_factor==2:
+    train_set = DatasetFromHdf5("dataset/train_2.h5")
+elif opt.upscale_factor==3:
+    train_set = DatasetFromHdf5("dataset/train_3.h5")
+elif opt.upscale_factor==4:
+    train_set = DatasetFromHdf5("dataset/train_4.h5")
+training_data_loader = DataLoader(dataset=train_set, num_workers=opt.threads, batch_size=opt.batchSize, shuffle=True)
 print('===> Building model')
 model = Net(upscale_factor=opt.upscale_factor)
 criterion = nn.MSELoss()
@@ -107,7 +112,7 @@ print("\nNum of parameters",params)
 def train(epoch):
     epoch_loss = 0
     for iteration, batch in enumerate(training_data_loader, 1):
-        input, target = Variable(batch[0]), Variable(batch[1])
+        input, target = Variable(batch[0]), Variable(batch[1], requires_grad=False)
         if cuda:
             input = input.cuda()
             target = target.cuda()
@@ -137,9 +142,12 @@ def test(epoch):
         avg_psnr += psnr
     logger.scalar_summary('PSNR',avg_psnr / len(testing_data_loader), epoch)
     print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr / len(testing_data_loader)))
+
 def adjust_learning_rate(optimizer, epoch):
-    """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
-    lr = opt.lr * (0.9 ** (epoch // 19))
+#    Sets the learning rate to the initial LR decayed by 10 every 30 epochs
+    lr = opt.lr * (0.1 ** (epoch // 5))
+    if lr<0.0001:
+        return
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
     logger.scalar_summary('learning rate',lr,epoch)
@@ -158,8 +166,8 @@ def checkpoint(epoch,_dict=False):
 def inference(epoch,savepath,datapath,name,dataset):
     global model
     img = Image.open(os.path.join(datapath,name)).convert('YCbCr')
-    img_bicubic = Image.open(os.path.join(datapath,name))
-    img_hr=Image.open(os.path.join(datapath,name.replace('LR',"HR")))
+    img_bicubic = Image.open(os.path.join(datapath,name)).convert("YCbCr")
+    img_hr=Image.open(os.path.join(datapath,name.replace('LR',"HR"))).convert("YCbCr")
     y, cb, cr = img.split()
     input = Variable(ToTensor()(y)).view(1, -1, y.size[1], y.size[0])
     if opt.cuda:
@@ -177,12 +185,13 @@ def inference(epoch,savepath,datapath,name,dataset):
     out_img_cb = cb.resize(out_img_y.size, Image.BICUBIC)
     out_img_cr = cr.resize(out_img_y.size, Image.BICUBIC)
     out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
+    bi_y,_,_=img_bicubic.split()
+    hr_y,_,_=img_hr.split()
 
     img=img.convert('RGB')
-    if dataset is "Set14" and epoch is 3:
-        img_bicubic=img_bicubic.convert('RGB')
-        img_hr=img_hr.convert('RGB')
-    matrix=[dp(psnr(img_bicubic,img_hr)),dp(psnr(out_img,img_hr)),dp(ssim(img_bicubic,img_hr)),dp(ssim(out_img,img_hr))]
+    img_bicubic=img_bicubic.convert('RGB')
+    img_hr=img_hr.convert('RGB')
+    matrix=[dp(psnr(bi_y,hr_y,opt.upscale_factor*2)),dp(psnr(out_img_y,hr_y,opt.upscale_factor*2)),dp(ssim(hr_y,bi_y,opt.upscale_factor*2)),dp(ssim(out_img_y,hr_y,opt.upscale_factor*2))]
     font = ImageFont.truetype("arial.ttf", 12)
     draw = ImageDraw.Draw(img_bicubic)
     draw.rectangle([0,0,120,36], fill=(255,255,255,255))
@@ -208,10 +217,12 @@ def inference(epoch,savepath,datapath,name,dataset):
     draw.text((0, 12), "Size:"+str(img.size[0])+" x "+str(img.size[1]),font=font,fill=(0,0,0,255))
     img.save(os.path.join(savepath,dataset+"_"+name[0:13]+'_LR.png'),"PNG")
     return np.array(matrix)
+
 if __name__ == "__main__":
     for epoch in range(1, opt.nEpochs + 1):
         adjust_learning_rate(optimizer, epoch)
         train(epoch)
+
         test(epoch)
         if epoch%opt.save_interval==0:
             checkpoint(epoch,_dict=opt.dict)
@@ -264,3 +275,4 @@ if __name__ == "__main__":
             f.write('\nSet14 average OURS SSIM: '+str(matrix[3]/14))
         else:
             print("Finish!")
+
