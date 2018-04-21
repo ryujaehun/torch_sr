@@ -23,7 +23,7 @@ parser.add_argument('--upscale_factor','-u', type=int,default=2, required=False,
 parser.add_argument('--data', type=str,default='OURS2',required=False, help="train data path")
 parser.add_argument('--batchSize','-b', type=int, default=256, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-parser.add_argument('--nEpochs','-n', type=int, default=40, help='number of epochs to train for')
+parser.add_argument('--nEpochs','-n', type=int, default=1, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=1, help='number of threads for data loader to use')
@@ -66,6 +66,30 @@ elif opt.model is 10:
 elif opt.model is 11:
     from net.model10 import Net
     name+='model_11_'
+elif opt.model is 20:
+    from net.model20 import Net
+    name+='model_20_'
+elif opt.model is 21:
+    from net.model21 import Net
+    name+='model_21_'
+elif opt.model is 22:
+    from net.model22 import Net
+    name+='model_22_'
+elif opt.model is 23:
+    from net.model23 import Net
+    name+='model_23_'
+elif opt.model is 24:
+    from net.model24 import Net
+    name+='model_24_'
+elif opt.model is 25:
+    from net.model25 import Net
+    name+='model_25_'
+elif opt.model is 26:
+    from net.model26 import Net
+    name+='model_26_'
+elif opt.model is 27:
+    from net.model27 import Net
+    name+='model_27_'
 else:
     print("illigel model!!\n")
     exit()
