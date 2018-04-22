@@ -21,15 +21,17 @@ from copy import deepcopy as dp
 parser = argparse.ArgumentParser(description='PyTorch Super Resolution')
 parser.add_argument('--upscale_factor','-u', type=int,default=2, required=False, help="super resolution upscale factor")
 parser.add_argument('--data', type=str,default='OURS2',required=False, help="train data path")
+parser.add_argument('--data1','-d1', type=str,default='96',required=False, help="train data path")
+parser.add_argument('--data2','-d2' ,type=str,default='28',required=False, help="train data path")
 parser.add_argument('--batchSize','-b', type=int, default=256, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-parser.add_argument('--nEpochs','-n', type=int, default=1, help='number of epochs to train for')
+parser.add_argument('--nEpochs','-n', type=int, default=50, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=1, help='number of threads for data loader to use')
 parser.add_argument('--model','-m', type=int, default='1', help='name of log file name')
 parser.add_argument('--dict', type=bool, default=False, help='Saveing option dict')
-parser.add_argument('--save_interval','-s', type=int, default='40', help='saveing interval')
+parser.add_argument('--save_interval','-s', type=int, default='10', help='saveing interval')
 opt = parser.parse_args()
 name=''
 
@@ -94,7 +96,7 @@ else:
     print("illigel model!!\n")
     exit()
 name+=str(opt.upscale_factor)
-_time="result/"+name+'/'+str(datetime.datetime.now())[:10]+"_"+str(datetime.datetime.now())[11:-7]
+_time="result/"+name+'_'+opt.data1+'_'+opt.data2+'/'+str(datetime.datetime.now())[:10]+"_"+str(datetime.datetime.now())[11:-7]
 os.makedirs(_time)
 logger = Logger(_time)
 print(opt)
@@ -110,11 +112,11 @@ test_set = get_test_set(opt.upscale_factor,opt.data)
 #training_data_loader = DataLoader(dataset=train_set, num_workers=opt.threads, batch_size=opt.batchSize, shuffle=True)
 testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batch_size=opt.testBatchSize, shuffle=False)
 if opt.upscale_factor==2:
-    train_set = DatasetFromHdf5("dataset/train_2.h5")
+    train_set = DatasetFromHdf5("dataset/train_2_"+opt.data1+'_'+opt.data2+".h5")
 elif opt.upscale_factor==3:
-    train_set = DatasetFromHdf5("dataset/train_3.h5")
+    train_set = DatasetFromHdf5("dataset/train_3_"+opt.data1+'_'+opt.data2+".h5")
 elif opt.upscale_factor==4:
-    train_set = DatasetFromHdf5("dataset/train_4.h5")
+    train_set = DatasetFromHdf5("dataset/train_4_"+opt.data1+'_'+opt.data2+".h5")
 training_data_loader = DataLoader(dataset=train_set, num_workers=opt.threads, batch_size=opt.batchSize, shuffle=True)
 print('===> Building model')
 model = Net(upscale_factor=opt.upscale_factor)
@@ -133,6 +135,7 @@ model_parameters = filter(lambda p: p.requires_grad, model.parameters())
 params = sum([np.prod(p.size()) for p in model_parameters])
 print("\nNum of parameters",params)
 
+logger.scalar_summary('parameters',params,1)
 def train(epoch):
     epoch_loss = 0
     for iteration, batch in enumerate(training_data_loader, 1):
