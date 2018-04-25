@@ -1,15 +1,15 @@
 clear;
 close all;
-folder = '/home/jaehun/sr/dataset/SRCNN/images/train';
+folder = '/home/jaehun/sr/dataset/291';
 
-savepath = '/home/jaehun/sr/dataset/train_4_96_14.h5';
+savepath = '/home/jaehun/sr/dataset/train_2_192_72.h5';
 
 %% scale factors
 %% label size only 192 or 96 or 48 or 24 or 12 or 6 ...
-scale = 4;
-size_label =96;
+scale = 2;
+size_label =192;
 size_input = size_label/scale;
-stride = 14;
+stride = 72;
 
 %% downsizing
 downsizes = [1,0.7,0.5];

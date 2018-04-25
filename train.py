@@ -21,17 +21,17 @@ from copy import deepcopy as dp
 parser = argparse.ArgumentParser(description='PyTorch Super Resolution')
 parser.add_argument('--upscale_factor','-u', type=int,default=2, required=False, help="super resolution upscale factor")
 parser.add_argument('--data', type=str,default='OURS2',required=False, help="train data path")
-parser.add_argument('--data1','-d1', type=str,default='96',required=False, help="train data path")
-parser.add_argument('--data2','-d2' ,type=str,default='28',required=False, help="train data path")
+parser.add_argument('--data1','-d1', type=str,default='192',required=False, help="train data path")
+parser.add_argument('--data2','-d2' ,type=str,default='72',required=False, help="train data path")
 parser.add_argument('--batchSize','-b', type=int, default=256, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-parser.add_argument('--nEpochs','-n', type=int, default=50, help='number of epochs to train for')
+parser.add_argument('--nEpochs','-n', type=int, default=60, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', action='store_true' ,help='use cuda?')
 parser.add_argument('--threads', type=int, default=1, help='number of threads for data loader to use')
 parser.add_argument('--model','-m', type=int, default='1', help='name of log file name')
 parser.add_argument('--dict', type=bool, default=False, help='Saveing option dict')
-parser.add_argument('--save_interval','-s', type=int, default='10', help='saveing interval')
+parser.add_argument('--save_interval','-s', type=int, default='20', help='saveing interval')
 opt = parser.parse_args()
 name=''
 
@@ -66,8 +66,11 @@ elif opt.model is 10:
     from net.model11 import Net
     name+='model_10_'
 elif opt.model is 11:
-    from net.model10 import Net
+    from net.model11 import Net
     name+='model_11_'
+elif opt.model is 12:
+    from net.model12 import Net
+    name+='model_12_'
 elif opt.model is 20:
     from net.model20 import Net
     name+='model_20_'

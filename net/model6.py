@@ -34,7 +34,8 @@ class Net(nn.Module):
         self.convdw9=nn.Conv2d(32,32,(5,1),1,(2,0),groups=32,bias=False)
         self.convpw9=nn.Conv2d(32,32,1,1,0,bias=False)
 
-        self.conv5 = nn.Conv2d(32, upscale_factor ** 2, (3, 3), (1, 1), (1, 1))
+        self.convdw10=nn.Conv2d(32,32,(3,3),1,(1,1),groups=32,bias=False)
+        self.convpw10=nn.Conv2d(32,upscale_factor**2,1,1,0,bias=False)
         self.pixel_shuffle = nn.PixelShuffle(upscale_factor)
 
         self._initialize_weights()
@@ -105,7 +106,9 @@ class Net(nn.Module):
         x+=re
 
         x+=residual
-        x = self.pixel_shuffle(self.conv5(x))
+        x = self.convdw10(self.relu(x))
+        x = self.convpw10(x)
+        x = self.pixel_shuffle(x)
         return x
 
     def _initialize_weights(self):
@@ -126,149 +129,5 @@ class Net(nn.Module):
         init.orthogonal(self.convpw8.weight)
         init.orthogonal(self.convdw9.weight,init.calculate_gain('relu'))
         init.orthogonal(self.convpw9.weight)
-        init.orthogonal(self.conv5.weight)
-        x+=residual
-        x = self.pixel_shuffle(self.conv5(x))
-        return x
-
-    def _initialize_weights(self):
-        init.orthogonal(self.conv1.weight, init.calculate_gain('relu'))
-        init.orthogonal(self.convdw2.weight,init.calculate_gain('relu'))
-        x+=residual
-        x = self.pixel_shuffle(self.conv5(x))
-        return x
-
-    def _initialize_weights(self):
-        init.orthogonal(self.conv1.weight, init.calculate_gain('relu'))
-        init.orthogonal(self.convdw2.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw2.weight)
-        init.orthogonal(self.convdw3.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw3.weight)
-        init.orthogonal(self.convdw4.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw4.weight)
-        init.orthogonal(self.convdw5.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw5.weight)
-        init.orthogonal(self.convdw6.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw6.weight)
-        init.orthogonal(self.convdw7.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw7.weight)
-        init.orthogonal(self.convdw8.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw8.weight)
-        init.orthogonal(self.convdw9.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw9.weight)
-        init.orthogonal(self.conv5.weight)
-        x+=residual
-        x = self.pixel_shuffle(self.conv5(x))
-        return x
-
-    def _initialize_weights(self):
-        init.orthogonal(self.conv1.weight, init.calculate_gain('relu'))
-        init.orthogonal(self.convdw2.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw2.weight)
-        init.orthogonal(self.convdw3.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw3.weight)
-        init.orthogonal(self.convdw4.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw4.weight)
-        init.orthogonal(self.convdw5.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw5.weight)
-        init.orthogonal(self.convdw6.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw6.weight)
-        init.orthogonal(self.convdw7.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw7.weight)
-        init.orthogonal(self.convdw8.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw8.weight)
-        init.orthogonal(self.convdw9.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw9.weight)
-        init.orthogonal(self.conv5.weight)
-        x+=residual
-        x = self.pixel_shuffle(self.conv5(x))
-        return x
-
-    def _initialize_weights(self):
-        init.orthogonal(self.conv1.weight, init.calculate_gain('relu'))
-        init.orthogonal(self.convdw2.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw2.weight)
-        init.orthogonal(self.convdw3.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw3.weight)
-        init.orthogonal(self.convdw4.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw4.weight)
-        init.orthogonal(self.convdw5.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw5.weight)
-        init.orthogonal(self.convdw6.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw6.weight)
-        init.orthogonal(self.convdw7.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw7.weight)
-        init.orthogonal(self.convdw8.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw8.weight)
-        init.orthogonal(self.convdw9.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw9.weight)
-        init.orthogonal(self.conv5.weight)
-        x+=residual
-        x = self.pixel_shuffle(self.conv5(x))
-        return x
-
-    def _initialize_weights(self):
-        init.orthogonal(self.conv1.weight, init.calculate_gain('relu'))
-        init.orthogonal(self.convdw2.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw2.weight)
-        init.orthogonal(self.convdw3.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw3.weight)
-        init.orthogonal(self.convdw4.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw4.weight)
-        init.orthogonal(self.convdw5.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw5.weight)
-        init.orthogonal(self.convdw6.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw6.weight)
-        init.orthogonal(self.convdw7.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw7.weight)
-        init.orthogonal(self.convdw8.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw8.weight)
-        init.orthogonal(self.convdw9.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw9.weight)
-        init.orthogonal(self.conv5.weight)
-        x+=residual
-        x = self.pixel_shuffle(self.conv5(x))
-        return x
-
-    def _initialize_weights(self):
-        init.orthogonal(self.conv1.weight, init.calculate_gain('relu'))
-        init.orthogonal(self.convdw2.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw2.weight)
-        init.orthogonal(self.convdw3.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw3.weight)
-        init.orthogonal(self.convdw4.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw4.weight)
-        init.orthogonal(self.convdw5.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw5.weight)
-        init.orthogonal(self.convdw6.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw6.weight)
-        init.orthogonal(self.convdw7.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw7.weight)
-        init.orthogonal(self.convdw8.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw8.weight)
-        init.orthogonal(self.convdw9.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw9.weight)
-        init.orthogonal(self.conv5.weight)
-        x+=residual
-        x = self.pixel_shuffle(self.conv5(x))
-        return x
-
-    def _initialize_weights(self):
-        init.orthogonal(self.conv1.weight, init.calculate_gain('relu'))
-        init.orthogonal(self.convdw2.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw2.weight)
-        init.orthogonal(self.convdw3.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw3.weight)
-        init.orthogonal(self.convdw4.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw4.weight)
-        init.orthogonal(self.convdw5.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw5.weight)
-        init.orthogonal(self.convdw6.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw6.weight)
-        init.orthogonal(self.convdw7.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw7.weight)
-        init.orthogonal(self.convdw8.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw8.weight)
-        init.orthogonal(self.convdw9.weight,init.calculate_gain('relu'))
-        init.orthogonal(self.convpw9.weight)
-        init.orthogonal(self.conv5.weight)
+        init.orthogonal(self.convdw10.weight,init.calculate_gain('relu'))
+        init.orthogonal(self.convpw10.weight)

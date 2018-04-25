@@ -30,6 +30,9 @@
 * model6: mad model..
 * model7: residual light
 * model8: residual more light
+* model9 : model 23이 이상치 너무 좋음 입력 파라미터줄임
+* model10 : model 23이 이상치 너무 좋음 입력 파라미터줄임+ recurcive x2
+* model11 : model 23이 이상치 너무 좋음 입력 파라미터줄임+ recurcive x3
 * model20: reduce feature map
 * model21: bias on 
 * model22: input kernal 5x5
