@@ -1,0 +1,10 @@
+#!/bin/bash
+for i in {1..4}
+    do
+		for j in {2..4}
+			do
+		 python3 train.py --cuda -m $i -u $j
+            wait
+			done
+        done
+

@@ -1,0 +1,7 @@
+#!/bin/bash
+		for j in {2..4}
+			do
+		CUDA_VISIBLE_DEVICES=1 python3 train.py --cuda -m 2 -u $j
+            wait
+			done
+
