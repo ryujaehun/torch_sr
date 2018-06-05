@@ -1,0 +1,5 @@
+#! /bin/bash
+for i in {'Animals','Autumn','Beach','Graphic','People','River','Sea','Ship','Steak','Storm','Waterfall','Woman'}
+do
+python3 srbi.py -u 4 -i $i
+done

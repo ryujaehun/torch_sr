@@ -1,0 +1,2 @@
+#! /bin/bash
+python3 srbi.py -u 4 -i "Milky Way"&&python3 srbi.py -u 4 -i "Red Poppy"&&python3 srbi.py -u 4 -i "Work Space"
