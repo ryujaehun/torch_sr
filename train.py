@@ -53,6 +53,12 @@ elif opt.model is 3:
 elif opt.model is 4:
     from net.model4 import Net
     name+='model_4_'
+elif opt.model is 5:
+    from net.model5 import Net
+    name+='model_5_'
+elif opt.model is 6:
+    from net.model6 import Net
+    name+='model_6_'
 else:
     print("illigel model!!\n")
     exit()
